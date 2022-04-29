@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.micropower.basic.dao.OperationRecordDao">
+    <insert id="insertExceptionRecord" parameterType="com.micropower.basic.entity.ExceptionRecordBean">
+        insert into exception_record(station_id, time, type, content)
+        values (#{stationId}, now(), #{type}, #{content})
+    </insert>
+    <insert id="insertMessage" parameterType="map">
+        insert into packet_record(area_code, address, type, time, content, description)
+        values (#{areaCode}, #{address}, #{type}, now(), #{content}, #{description})
+    </insert>
+    <insert id="insertOperationRecord" useGeneratedKeys="true" keyProperty="id" parameterType="map">
+        insert into operation_record(time, area_code, address, type, content, feedback)
+        VALUES (#{time}, #{areCode}, #{address}, #{type}, #{content}, #{feedback})
+    </insert>
+    <insert id="insertCycleRecord" parameterType="map">
+        insert into device_cycle_record(area_code, address, outlet_level, value_list, sample_time)
+        VALUES (#{areaCode}, #{address}, #{outletLevel}, #{valueList}, #{sampleTime})
+    </insert>
+    <insert id="insertHistoryRecord" parameterType="map">
+        insert into device_history_record(area_code, address, outlet_level, value_list, sample_time)
+        VALUES (#{areaCode}, #{address}, #{outletLevel}, #{valueList}, #{sampleTime})
+    </insert>
+    <insert id="insertDeviceOperationRecord"
+            parameterType="com.micropower.basic.common.dto.receive.OperationChildRecord">
+        insert into device_operation_record(area_code, address, `time`, `source`, type, cmd_type)
+        VALUES (#{areaCode}, #{address}, #{time}, #{source}, #{type}, #{cmdType})
+    </insert>
+    <insert id="insertDeviceExceptionRecord"
+            parameterType="com.micropower.basic.common.dto.receive.ExceptionChildRecord">
+        insert into device_exception_record(area_code, address, `time`, type)
+        VALUES (#{areaCode}, #{address}, #{time}, #{type})
+    </insert>
+    <insert id="insertUpdateDeviceConfig" parameterType="com.micropower.basic.common.dto.receive.QuerySettingBackDto">
+        insert into device_parameters(area_code, address, hardware_version, software_version, serial_number, date_time,
+                                      run_model, rtc_auto, level_warn_value, sample_cycle, normal_report_interval,
+                                      warn_report_interval, depth, level_compensate, factor1_type, factor1_range,
+                                      factor2_type, factor2_range, factor3_type, factor3_range, factor4_type,
+                                      factor4_range, data_center1_ip, data_center1_port, data_center1_model,
+                                      data_center2_ip, data_center2_port, data_center2_model, data_center3_ip,
+                                      data_center3_port, data_center3_model, baud_rate, data_digit, check_digit,
+                                      stop_digit, serial_port_power_control, channel1_power_control,
+                                      channel2_power_control, channel3_power_control, channel4_power_control,
+                                      ultrasonic_level_control, signal_quality, adc1_1_check, adc1_1_value,
+                                      adc1_2_check, adc1_2_value, adc2_1_check, adc2_1_value, adc2_2_check,
+                                      adc2_2_value, adc3_1_check, adc3_1_value, adc3_2_check, adc3_2_value,
+                                      adc4_1_check, adc4_1_value, adc4_2_check, adc4_2_value, rs485_wait_power_on_time,
+                                      rs485_device_num, rs485_variate1_address, rs485_variate1_function_code,
+                                      rs485_variate1_start_no, rs485_variate1_data_type, rs485_variate1_byte_mode,
+                                      rs485_variate2_address, rs485_variate2_function_code, rs485_variate2_start_no,
+                                      rs485_variate2_data_type, rs485_variate2_byte_mode, rs485_variate3_address,
+                                      rs485_variate3_function_code, rs485_variate3_start_no, rs485_variate3_data_type,
+                                      rs485_variate3_byte_mode, rs485_variate4_address, rs485_variate4_function_code,
+                                      rs485_variate4_start_no, rs485_variate4_data_type, rs485_variate4_byte_mode,
+                                      rs485_variate5_address, rs485_variate5_function_code, rs485_variate5_start_no,
+                                      rs485_variate5_data_type, rs485_variate5_byte_mode, rs485_variate6_address,
+                                      rs485_variate6_function_code, rs485_variate6_start_no, rs485_variate6_data_type,
+                                      rs485_variate6_byte_mode, rs485_variate7_address, rs485_variate7_function_code,
+                                      rs485_variate7_start_no, rs485_variate7_data_type, rs485_variate7_byte_mode,
+                                      rs485_variate8_address, rs485_variate8_function_code, rs485_variate8_start_no,
+                                      rs485_variate8_data_type, rs485_variate8_byte_mode, rs485_variate9_address,
+                                      rs485_variate9_function_code, rs485_variate9_start_no, rs485_variate9_data_type,
+                                      rs485_variate9_byte_mode, rs485_variate10_address, rs485_variate10_function_code,
+                                      rs485_variate10_start_no, rs485_variate10_data_type, rs485_variate10_byte_mode,
+                                      rs485_variate11_address, rs485_variate11_function_code, rs485_variate11_start_no,
+                                      rs485_variate11_data_type, rs485_variate11_byte_mode, rs485_variate12_address,
+                                      rs485_variate12_function_code, rs485_variate12_start_no,
+                                      rs485_variate12_data_type,
+                                      rs485_variate12_byte_mode, adc1_channel_delay_time, adc2_channel_delay_time,
+                                      adc3_channel_delay_time, adc4_channel_delay_time, IMEI, CCID, update_time)
+        VALUES (#{areaCode}, #{address}, #{hardwareVersion}, #{softwareVersion}, #{serialNumber}, #{dateTime},
+                #{runModel}, #{rtcAuto}, #{levelWarnValue}, #{sampleCycle}, #{normalReportInterval},
+                #{warnReportInterval}, #{depth}, #{levelCompensate}, #{factor1Type}, #{factor1Range},
+                #{factor2Type}, #{factor2Range}, #{factor3Type}, #{factor3Range}, #{factor4Type},
+                #{factor4Range}, #{dataCenter1Ip}, #{dataCenter1Port}, #{dataCenter1Model},
+                #{dataCenter2Ip}, #{dataCenter2Port}, #{dataCenter2Model}, #{dataCenter3Ip},
+                #{dataCenter3Port}, #{dataCenter3Model}, #{baudRate}, #{dataDigit}, #{checkDigit},
+                #{stopDigit}, #{serialPortPowerControl}, #{channel1PowerControl},
+                #{channel2PowerControl}, #{channel3PowerControl}, #{channel4PowerControl},
+                #{ultrasonicLevelControl}, #{signalQuality}, #{adc1_1Check}, #{adc1_1Value},
+                #{adc1_2Check}, #{adc1_2Value}, #{adc2_1Check}, #{adc2_1Value}, #{adc2_2Check},
+                #{adc2_2Value}, #{adc3_1Check}, #{adc3_1Value}, #{adc3_2Check}, #{adc3_2Value},
+                #{adc4_1Check}, #{adc4_1Value}, #{adc4_2Check}, #{adc4_2Value}, #{rs485WaitPowerOnTime},
+                #{rs485DeviceNum}, #{rs485Variate1Address}, #{rs485Variate1FunctionCode},
+                #{rs485Variate1StartNo}, #{rs485Variate1DataType}, #{rs485Variate1ByteMode},
+                #{rs485Variate2Address}, #{rs485Variate2FunctionCode}, #{rs485Variate2StartNo},
+                #{rs485Variate2DataType}, #{rs485Variate2ByteMode},
+                #{rs485Variate3Address}, #{rs485Variate3FunctionCode}, #{rs485Variate3StartNo},
+                #{rs485Variate3DataType}, #{rs485Variate3ByteMode},
+                #{rs485Variate4Address}, #{rs485Variate4FunctionCode}, #{rs485Variate4StartNo},
+                #{rs485Variate4DataType}, #{rs485Variate4ByteMode},
+                #{rs485Variate5Address}, #{rs485Variate5FunctionCode}, #{rs485Variate5StartNo},
+                #{rs485Variate5DataType}, #{rs485Variate5ByteMode},
+                #{rs485Variate6Address}, #{rs485Variate6FunctionCode}, #{rs485Variate6StartNo},
+                #{rs485Variate6DataType}, #{rs485Variate6ByteMode},
+                #{rs485Variate7Address}, #{rs485Variate7FunctionCode}, #{rs485Variate7StartNo},
+                #{rs485Variate7DataType}, #{rs485Variate7ByteMode},
+                #{rs485Variate8Address}, #{rs485Variate8FunctionCode}, #{rs485Variate8StartNo},
+                #{rs485Variate8DataType}, #{rs485Variate8ByteMode},
+                #{rs485Variate9Address}, #{rs485Variate9FunctionCode}, #{rs485Variate9StartNo},
+                #{rs485Variate9DataType}, #{rs485Variate9ByteMode},
+                #{rs485Variate10Address}, #{rs485Variate10FunctionCode}, #{rs485Variate10StartNo},
+                #{rs485Variate10DataType}, #{rs485Variate10ByteMode},
+                #{rs485Variate11Address}, #{rs485Variate11FunctionCode}, #{rs485Variate11StartNo},
+                #{rs485Variate11DataType}, #{rs485Variate11ByteMode},
+                #{rs485Variate12Address}, #{rs485Variate12FunctionCode}, #{rs485Variate12StartNo},
+                #{rs485Variate12DataType}, #{rs485Variate12ByteMode},
+                #{adc1ChannelDelayTime}, #{adc2ChannelDelayTime}, #{adc3ChannelDelayTime}, #{adc4ChannelDelayTime},
+                #{IMEI}, #{CCID}, now())
+        ON DUPLICATE KEY UPDATE area_code=#{areaCode},
+                                address=#{address},
+                                hardware_version=#{hardwareVersion},
+                                software_version=#{softwareVersion},
+                                serial_number=#{serialNumber},
+                                date_time=#{dateTime},
+                                run_model=#{runModel},
+                                rtc_auto=#{rtcAuto},
+                                level_warn_value=#{levelWarnValue},
+                                sample_cycle=#{sampleCycle},
+                                normal_report_interval=#{normalReportInterval},
+                                warn_report_interval=#{warnReportInterval},
+                                depth=#{depth},
+                                level_compensate=#{levelCompensate},
+                                factor1_type=#{factor1Type},
+                                factor1_range=#{factor1Range},
+                                factor2_type=#{factor2Type},
+                                factor2_range=#{factor2Range},
+                                factor3_type=#{factor3Type},
+                                factor3_range=#{factor3Range},
+                                factor4_type=#{factor4Type},
+                                factor4_range=#{factor4Range},
+                                data_center1_ip=#{dataCenter1Ip},
+                                data_center1_port=#{dataCenter1Port},
+                                data_center1_model=#{dataCenter1Model},
+                                data_center2_ip=#{dataCenter2Ip},
+                                data_center2_port=#{dataCenter2Port},
+                                data_center2_model=#{dataCenter2Model},
+                                data_center3_ip=#{dataCenter3Ip},
+                                data_center3_port=#{dataCenter3Port},
+                                data_center3_model=#{dataCenter3Model},
+                                baud_rate=#{baudRate},
+                                data_digit=#{dataDigit},
+                                check_digit=#{checkDigit},
+                                stop_digit=#{stopDigit},
+                                serial_port_power_control=#{serialPortPowerControl},
+                                channel1_power_control=#{channel1PowerControl},
+                                channel2_power_control=#{channel2PowerControl},
+                                channel3_power_control=#{channel3PowerControl},
+                                channel4_power_control=#{channel4PowerControl},
+                                ultrasonic_level_control=#{ultrasonicLevelControl},
+                                signal_quality=#{signalQuality},
+                                adc1_1_check=#{adc1_1Check},
+                                adc1_1_value=#{adc1_1Value},
+                                adc1_2_check=#{adc1_2Check},
+                                adc1_2_value=#{adc1_2Value},
+                                adc2_1_check=#{adc2_1Check},
+                                adc2_1_value=#{adc2_1Value},
+                                adc2_2_check=#{adc2_2Check},
+                                adc2_2_value=#{adc2_2Value},
+                                adc3_1_check=#{adc3_1Check},
+                                adc3_1_value=#{adc3_1Value},
+                                adc3_2_check=#{adc3_2Check},
+                                adc3_2_value=#{adc3_2Value},
+                                adc4_1_check=#{adc4_1Check},
+                                adc4_1_value=#{adc4_1Value},
+                                adc4_2_check=#{adc4_2Check},
+                                adc4_2_value=#{adc4_2Value},
+                                rs485_wait_power_on_time=#{rs485WaitPowerOnTime},
+                                rs485_device_num=#{rs485DeviceNum},
+                                rs485_variate1_address=#{rs485Variate1Address},
+                                rs485_variate1_function_code=#{rs485Variate1FunctionCode},
+                                rs485_variate1_start_no=#{rs485Variate1StartNo},
+                                rs485_variate1_data_type=#{rs485Variate1DataType},
+                                rs485_variate1_byte_mode=#{rs485Variate1ByteMode},
+                                rs485_variate2_address=#{rs485Variate2Address},
+                                rs485_variate2_function_code=#{rs485Variate2FunctionCode},
+                                rs485_variate2_start_no=#{rs485Variate2StartNo},
+                                rs485_variate2_data_type=#{rs485Variate2DataType},
+                                rs485_variate2_byte_mode=#{rs485Variate2ByteMode},
+                                rs485_variate3_address=#{rs485Variate3Address},
+                                rs485_variate3_function_code=#{rs485Variate3FunctionCode},
+                                rs485_variate3_start_no=#{rs485Variate3StartNo},
+                                rs485_variate3_data_type=#{rs485Variate3DataType},
+                                rs485_variate3_byte_mode=#{rs485Variate3ByteMode},
+                                rs485_variate4_address=#{rs485Variate4Address},
+                                rs485_variate4_function_code=#{rs485Variate4FunctionCode},
+                                rs485_variate4_start_no=#{rs485Variate4StartNo},
+                                rs485_variate4_data_type=#{rs485Variate4DataType},
+                                rs485_variate4_byte_mode=#{rs485Variate4ByteMode},
+                                rs485_variate5_address=#{rs485Variate5Address},
+                                rs485_variate5_function_code=#{rs485Variate5FunctionCode},
+                                rs485_variate5_start_no=#{rs485Variate5StartNo},
+                                rs485_variate5_data_type=#{rs485Variate5DataType},
+                                rs485_variate5_byte_mode=#{rs485Variate5ByteMode},
+                                rs485_variate6_address=#{rs485Variate6Address},
+                                rs485_variate6_function_code=#{rs485Variate6FunctionCode},
+                                rs485_variate6_start_no=#{rs485Variate6StartNo},
+                                rs485_variate6_data_type=#{rs485Variate6DataType},
+                                rs485_variate6_byte_mode=#{rs485Variate6ByteMode},
+                                rs485_variate7_address=#{rs485Variate7Address},
+                                rs485_variate7_function_code=#{rs485Variate7FunctionCode},
+                                rs485_variate7_start_no=#{rs485Variate7StartNo},
+                                rs485_variate7_data_type=#{rs485Variate7DataType},
+                                rs485_variate7_byte_mode=#{rs485Variate7ByteMode},
+                                rs485_variate8_address=#{rs485Variate8Address},
+                                rs485_variate8_function_code=#{rs485Variate8FunctionCode},
+                                rs485_variate8_start_no=#{rs485Variate8StartNo},
+                                rs485_variate8_data_type=#{rs485Variate8DataType},
+                                rs485_variate8_byte_mode=#{rs485Variate8ByteMode},
+                                rs485_variate9_address=#{rs485Variate9Address},
+                                rs485_variate9_function_code=#{rs485Variate9FunctionCode},
+                                rs485_variate9_start_no=#{rs485Variate9StartNo},
+                                rs485_variate9_data_type=#{rs485Variate9DataType},
+                                rs485_variate9_byte_mode=#{rs485Variate9ByteMode},
+                                rs485_variate10_address=#{rs485Variate10Address},
+                                rs485_variate10_function_code=#{rs485Variate10FunctionCode},
+                                rs485_variate10_start_no=#{rs485Variate10StartNo},
+                                rs485_variate10_data_type=#{rs485Variate10DataType},
+                                rs485_variate10_byte_mode=#{rs485Variate10ByteMode},
+                                rs485_variate11_address=#{rs485Variate11Address},
+                                rs485_variate11_function_code=#{rs485Variate11FunctionCode},
+                                rs485_variate11_start_no=#{rs485Variate11StartNo},
+                                rs485_variate11_data_type=#{rs485Variate11DataType},
+                                rs485_variate11_byte_mode=#{rs485Variate11ByteMode},
+                                rs485_variate12_address=#{rs485Variate12Address},
+                                rs485_variate12_function_code=#{rs485Variate12FunctionCode},
+                                rs485_variate12_start_no=#{rs485Variate12StartNo},
+                                rs485_variate12_data_type=#{rs485Variate12DataType},
+                                rs485_variate12_byte_mode=#{rs485Variate12ByteMode},
+                                adc1_channel_delay_time=#{adc1ChannelDelayTime},
+                                adc2_channel_delay_time=#{adc2ChannelDelayTime},
+                                adc3_channel_delay_time=#{adc3ChannelDelayTime},
+                                adc4_channel_delay_time=#{adc4ChannelDelayTime},
+                                IMEI=#{IMEI},
+                                CCID=#{CCID},
+                                update_time=now()
+    </insert>
+    <insert id="insertForwardRecord">
+        insert into forwarding_record(`time`, area_code, address, content, ip, port, `type`, result)
+        VALUES (now(), #{areaCode}, #{address}, #{content}, #{ip}, #{port}, #{type}, #{result})
+    </insert>
+    <insert id="insertMessageRecord">
+        insert into message_record(`time`, station_id, `type`, content, feedback)
+            value (now(), #{stationId}, #{type}, #{content}, #{feedback})
+    </insert>
+    <update id="updateOperationRecord">
+        update operation_record
+        set feedback=#{feedback}
+        where id = #{id}
+    </update>
+    <delete id="cleanUpMessage">
+        delete
+        from packet_record
+        where time &lt; date_sub(now(), interval 14 day)
+    </delete>
+    <delete id="cleanUpForward">
+        delete
+        from forwarding_record
+        where time &lt; date_sub(now(), interval 14 day)
+    </delete>
+    <select id="getMaxFlow" resultType="java.util.Map">
+        SELECT if(total_flow is null, 0, total_flow) as total_flow
+        FROM flow_min_record
+        where address = #{address}
+          and area_code = #{areaCode}
+          and total_flow != '异常'
+          and total_flow != '解析异常'
+          and total_flow != '故障'
+        order by `time` desc
+        limit 1
+    </select>
+    <select id="getFlowAvg" resultType="java.util.Map">
+        select avg(level_height) as levelHeight, avg(speed) as speed, avg(flow) as flow
+        from flow_min_record
+        where address = #{address}
+          and area_code = #{areaCode}
+          and `time` between #{beginTime} and #{endTime}
+          and (level_height != '异常' or speed != '异常' or flow != '异常')
+    </select>
+    <select id="getWaterList" resultType="java.util.Map">
+        select outlet_level, value_list
+        from device_value_record
+        where address = #{address}
+          and area_code = #{areaCode}
+          and `time` between #{beginTime} and #{endTime}
+    </select>
+</mapper>

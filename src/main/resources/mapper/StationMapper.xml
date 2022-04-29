@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.micropower.basic.dao.StationDao">
+    <resultMap id="stationResultMap" type="com.micropower.basic.entity.StationBean">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="blockId" column="block_id"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="state" column="state"/>
+        <result property="blockUrl" column="blockUrl"/>
+        <result property="gpsRead" column="state"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <association property="device" resultMap="com.micropower.basic.dao.CompanyDao.deviceResultMap"/>
+    </resultMap>
+    <update id="networkOffline">
+        update realtime_running
+        set network='离线'
+        where station_id = #{stationId}
+    </update>
+    <select id="getStationByMap" resultMap="stationResultMap">
+        select s.*,b.url as blockUrl,d.*
+        from station s
+        join block b on b.id=s.block_id
+        join device d on d.id=s.device_id
+        <where>
+            <if test="area_code!=null and area_code!=''">
+                and d.area_code=#{area_code}
+            </if>
+            <if test="address!=null and address!=''">
+                and d.address=#{address}
+            </if>
+        </where>
+    </select>
+    <select id="getStationListByMap" resultType="com.micropower.basic.entity.StationBean">
+        select s.*,d.*
+        from station s
+        join device d on d.id=s.device_id
+        <where>
+            <if test="is_flow !=''and is_flow!=null">
+                and d.is_flow=#{is_flow}
+            </if>
+        </where>
+    </select>
+</mapper>

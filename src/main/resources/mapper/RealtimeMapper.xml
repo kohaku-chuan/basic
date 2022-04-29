@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.micropower.basic.dao.RealtimeDao">
+    <insert id="insertUpdateRealtime">
+        insert into device_realtime_running(area_code, address, area, network, run_state, fault_state, rtc_time,
+                                            internal_voltage, external_voltage, sensor_voltage, temp, humidity,
+                                            tilt_angle,
+                                            rssi, rsrp, outlet_level, value_list, sample_time,
+                                            update_time, flow, speed, level_height, emissions, total_flow,
+                                            data_state, communication_mode, voltage_warn, humidity_warn,
+                                            sensor_voltage_warn,
+                                            rainfall_intensity, pulse_base)
+        VALUES (#{areaCode}, #{address}, #{area}, #{network}, #{runState}, #{faultState}, #{rtcTime},
+                #{internalVoltage}, #{externalVoltage}, #{sensorVoltage}, #{temp}, #{humidity},
+                #{tiltAngle}, #{rssi}, #{rsrp}, #{outletLevel}, #{valueList}, #{sampleTime}, #{updateTime},
+                #{flow}, #{speed}, #{levelHeight}, #{emissions}, #{totalFlow}, #{dataState},
+                #{communicationMode}, #{voltage_warn}, #{humidity_warn}, #{sensor_voltage_warn}, #{rainfallIntensity},
+                #{rainfallPulse})
+        ON DUPLICATE KEY UPDATE area_code=#{areaCode},
+                                address=#{address},
+                                area=#{area},
+                                network= #{network},
+                                run_state=#{runState},
+                                fault_state=#{faultState},
+                                rtc_time= #{rtcTime},
+                                internal_voltage= #{internalVoltage},
+                                external_voltage=#{externalVoltage},
+                                sensor_voltage=#{sensorVoltage},
+                                temp=#{temp},
+                                humidity=#{humidity},
+                                tilt_angle=#{tiltAngle},
+                                rssi= #{rssi},
+                                rsrp= #{rsrp},
+                                outlet_level=#{outletLevel},
+                                value_list=#{valueList},
+                                sample_time=#{sampleTime},
+                                update_time= #{updateTime},
+                                flow=#{flow},
+                                speed= #{speed},
+                                level_height=#{levelHeight},
+                                emissions=#{emissions},
+                                total_flow= #{totalFlow},
+                                data_state=#{dataState},
+                                communication_mode=#{communicationMode},
+                                voltage_warn=#{voltage_warn},
+                                humidity_warn=#{voltage_warn},
+                                sensor_voltage_warn=#{sensor_voltage_warn},
+                                rainfall_intensity=#{rainfallIntensity},
+                                pulse_base=#{rainfallPulse}
+    </insert>
+    <insert id="insertStateRecordList" parameterType="java.util.List">
+        insert into device_state_record(area_code, address, run_state, fault_state, rtc_time, internal_voltage,
+        external_voltage, sensor_voltage, temp, humidity, tilt_angle, rssi, rsrp, latitude, longitude, sample_time,
+        time) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.areaCode},#{item.address},#{item.runState},#{item.faultState},#{item.rtcTime},#{item.internalVoltage},
+            #{item.externalVoltage},#{item.sensorVoltage},#{item.temp},#{item.humidity},#{item.tiltAngle},#{item.rssi},#{item.rsrp},
+            #{item.latitude},#{item.longitude},#{item.sampleTime},#{item.updateTime})
+        </foreach>
+    </insert>
+    <insert id="insertValueRecordList" parameterType="java.util.List">
+        insert into device_value_record(area_code, address, outlet_level, value_list, `time`) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.areaCode},#{item.address},#{item.outletLevel},#{item.valueList},#{item.updateTime})
+        </foreach>
+    </insert>
+    <insert id="insertCycleRecord" parameterType="map">
+        insert into device_cycle_record(area_code, address, outlet_level, value_list, sample_time)
+        VALUES (#{areaCode}, #{address}, #{outletLevel}, #{valueList}, #{sampleTime})
+    </insert>
+    <insert id="insertFlowMinRecordList" parameterType="java.util.List">
+        insert into flow_min_record(area_code, address, `time`, level_height, speed, flow, total_flow, emissions)VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.areaCode},#{item.address},#{item.updateTime},#{item.levelHeight},#{item.speed},#{item.flow},
+            #{item.totalFlow},#{item.emissions})
+        </foreach>
+    </insert>
+    <insert id="insertFlowHourRecordList" parameterType="java.util.List">
+        insert into flow_hour_record(area_code, address, `time`, level_height, speed, flow, total_flow, emissions,
+        `range`)VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.areaCode},#{item.address},#{item.time},#{item.levelHeight},#{item.speed},#{item.flow},
+            #{item.totalFlow},#{item.emissions},#{item.range})
+        </foreach>
+    </insert>
+    <insert id="insertFlowDayRecordList" parameterType="java.util.List">
+        insert into flow_day_record(area_code, address, `time`, level_height, speed, flow, total_flow, emissions,
+        `range`)VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.areaCode},#{item.address},#{item.time},#{item.levelHeight},#{item.speed},#{item.flow},
+            #{item.totalFlow},#{item.emissions},#{item.range})
+        </foreach>
+    </insert>
+    <insert id="insertValueMinRecord">
+        insert into device_value_min_record(area_code, address, time, value_name, outlet_level, value1, value2, value3,
+                                            value4, value5, value6, value7, value8, value9, value10, state)
+        VALUES (#{areaCode}, #{address}, now(), #{valueName}, #{outletLevel}, #{value1}, #{value2}, #{value3},
+                #{value4}, #{value5},
+                #{value6}, #{value7}, #{value8}, #{value9}, #{value10}, #{state})
+    </insert>
+    <insert id="insertStateRecord">
+        insert into device_state_record(area_code, address, run_state, fault_state, rtc_time, internal_voltage,
+                                        external_voltage, sensor_voltage, temp, humidity, tilt_angle, rssi, rsrp,
+                                        latitude, longitude, sample_time, state,
+                                        time)
+        VALUES (#{areaCode}, #{address}, #{runState}, #{faultState}, #{rtcTime},
+                #{internalVoltage},
+                #{externalVoltage}, #{sensorVoltage}, #{temp}, #{humidity}, #{tiltAngle},
+                #{rssi}, #{rsrp},
+                #{latitude}, #{longitude}, #{sampleTime}, #{state}, #{updateTime})
+    </insert>
+    <insert id="insertValueRecord">
+        insert into device_value_record(area_code, address, outlet_level, value_list, `time`, state)
+        VALUES (#{area_code}, #{address}, #{outlet_level}, #{value_list}, #{updateTime}, #{state})
+    </insert>
+    <insert id="insertFlowMinRecord">
+        insert into flow_min_record(area_code, address, `time`, level_height, speed, flow, total_flow, emissions)
+        VALUES (#{area_code}, #{address}, #{updateTime}, #{level_height}, #{speed}, #{flow},
+                #{total_flow}, #{emissions})
+    </insert>
+    <insert id="insertRainfallMinRecord">
+        insert into rainfall_min_record(area_code, address, time, rainfall_pulse, rainfall, rainfall_intensity, state)
+        VALUES (#{areaCode}, #{address}, now(), #{rainfallPulse}, #{rainfall}, #{rainfallIntensity}, #{state})
+    </insert>
+    <update id="updateFlowBase">
+        update realtime_running
+        set flow_base=#{totalFlow}
+        where station_id = #{stationId}
+    </update>
+    <update id="deviceOffline">
+        update device
+        set network='离线'
+        where area_code = #{areaCode}
+          and address = #{address}
+    </update>
+    <select id="getListByMap" resultType="java.util.Map">
+        select r.*,d.state,d.is_flow
+        from device_realtime_running r
+        left join device d on r.area_code=d.area_code and r.address=d.address
+        <where>
+            <if test="network!=null and network!=''">
+                and r.network=#{network}
+            </if>
+            <if test="state!=null and state!=''">
+                and d.state=#{state}
+            </if>
+        </where>
+        order by r.area_code asc,r.address asc
+    </select>
+    <select id="getTotalFlowBasic" resultType="java.util.Map">
+        select update_time, flow_base
+        from realtime_running
+        where station_id = #{stationId}
+    </select>
+    <select id="getGlobalWarn" resultType="java.util.Map">
+        select voltage, humidity, sensor_voltage
+        from global_warn
+    </select>
+    <select id="getPulseBasic" resultType="java.util.Map">
+        select update_time, pulse_base
+        from realtime_running
+        where station_id = #{stationId}
+    </select>
+    <select id="getLastTimeUploadTime" resultType="java.lang.String">
+        select update_time
+        from realtime_running
+        where station_id = #{stationId}
+    </select>
+</mapper>

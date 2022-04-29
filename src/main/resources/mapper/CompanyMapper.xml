@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.micropower.basic.dao.CompanyDao">
+    <resultMap id="deviceResultMap" type="com.micropower.basic.entity.DeviceBean">
+        <id property="id" column="id"/>
+        <result property="areaCode" column="area_code"/>
+        <result property="address" column="address"/>
+        <result property="areaAddress" column="area_address"/>
+        <result property="name" column="name"/>
+        <result property="area" column="area"/>
+        <result property="uploadTime" column="upload_time"/>
+        <result property="overTime" column="over_time"/>
+        <result property="rs485" column="rs485"/>
+        <result property="analog" column="analog"/>
+        <result property="isFlow" column="is_flow"/>
+        <result property="isLevel" column="is_level"/>
+        <result property="levelWarn" column="level_warn"/>
+        <result property="levelState" column="level_state"/>
+        <result property="levelFakeMin" column="level_fake_min"/>
+        <result property="levelFakeMax" column="level_fake_max"/>
+        <result property="flowCount" column="flow_count"/>
+        <result property="pipeDiameter" column="pipe_diameter"/>
+        <result property="pipeShape" column="pipe_shape"/>
+        <result property="pipeHeight" column="pipe_height"/>
+        <result property="siltHeight" column="silt_height"/>
+        <result property="flowName" column="flow_name"/>
+        <result property="speedName" column="speed_name"/>
+        <result property="levelHeightName" column="level_height_name"/>
+        <result property="totalFlowName" column="total_flow_name"/>
+        <result property="triangleCoefficient" column="triangle_coefficient"/>
+        <result property="isSensor" column="is_sensor"/>
+        <result property="isRainfall" column="is_rainfall"/>
+        <result property="rainfallPulseName" column="rainfall_pulse_name"/>
+        <result property="isAep" column="is_aep"/>
+        <result property="aepId" column="aep_id"/>
+        <result property="state" column="state"/>
+        <result property="network" column="network"/>
+    </resultMap>
+
+    <select id="getByAddress" resultMap="deviceResultMap">
+        select *
+        from device
+        where area_code = #{areaCode}
+          and address = #{address}
+    </select>
+    <select id="getListByMap" resultMap="deviceResultMap">
+        select *
+        from device
+        <where>
+            <if test="isFlow!=null and isFlow!=''">
+                and is_flow=#{isFlow}
+            </if>
+            <if test="network!=null and network!=''">
+                and network=#{network}
+            </if>
+        </where>
+    </select>
+    <select id="getStationForward" resultType="java.util.Map">
+        select `type`, ip, `port`, remark
+        from forwarding_configure
+        where station_id = #{stationId}
+    </select>
+    <select id="getReceiverList" resultType="java.util.Map">
+        select u.*
+        from `user` u
+        join block b on u.b = u.id
+        <where>
+            <if test="blockUrl!=null and block!=''">
+
+            </if>
+        </where>
+    </select>
+    <select id="getBuoyStationConfigure" resultType="java.util.Map">
+        select *
+        from buoy_station_configure
+        where device_id = #{id}
+    </select>
+    <select id="getSuperAdminPhone" resultType="java.util.Map">
+        select *
+        from user
+        <where>
+            <if test="type==1">
+                and network_warn=1
+            </if>
+            <if test="type==2">
+                and level_warn=1
+            </if>
+            <if test="type==3">
+                and one_level_warn=1
+            </if>
+            <if test="type==4">
+                and two_level_warn=1
+            </if>
+            and role_id = 1
+            and message = 1
+        </where>
+    </select>
+    <select id="getNormalUserPhone" resultType="java.util.Map">
+        select u.*
+        from user u
+        join block b on b.id = u.block_id
+        <where>
+            <if test="type=='network_warn'">
+                and network_warn=1
+            </if>
+            <if test="type=='level_warn'">
+                and level_warn=1
+            </if>
+            <if test="type=='one_level_warn'">
+                and one_level_warn=1
+            </if>
+            <if test="type=='two_level_warn'">
+                and two_level_warn=1
+            </if>
+            and b.url like concat('%', #{blockUrl})
+            and u.role_id!=1
+            and message = 1
+        </where>
+    </select>
+    <select id="getOriginForwardConfig" resultType="java.util.Map">
+        select f.*
+        from forwarding_configure f
+                 join station s on s.id = f.station_id
+                 join device d on d.id = s.device_id
+        where d.area_code = #{areaCode}
+          and d.address = #{address}
+    </select>
+</mapper>
