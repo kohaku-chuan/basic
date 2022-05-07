@@ -12,9 +12,9 @@ public interface CompanyDao {
 
     DeviceBean getByAddress(@Param("areaCode") String areaCode, @Param("address") Integer address);
 
-    List<DeviceBean> getListByMap(Map<String,Object> map);
+    List<DeviceBean> getListByMap(Map<String, Object> map);
 
-    List<Map<String, Object>> getStationForward(@Param("stationId")Integer stationId);
+    List<Map<String, Object>> getStationForward(@Param("stationId") Integer stationId);
 
     List<Map<String, Object>> getReceiverList(String id);
 
@@ -22,8 +22,9 @@ public interface CompanyDao {
 
     List<Map<String, Object>> getSuperAdminPhone(String type);
 
-    List<Map<String, Object>> getNormalUserPhone(@Param("blockUrl") String blockUrl,@Param("type") String type);
+    List<Map<String, Object>> getNormalUserPhone(@Param("blockUrl") String blockUrl, @Param("type") String type);
 
-    List<Map<String, Object>> getOriginForwardConfig(@Param("areaCode")String areaCode, @Param("address")Integer address);
+    List<Map<String, Object>> getOriginForwardConfig(@Param("areaCode") String areaCode, @Param("address") Integer address);
 
+    int dataUpload(@Param("areaCode") String areaCode, @Param("address") Integer address);
 }

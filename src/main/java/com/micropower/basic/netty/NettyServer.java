@@ -1,7 +1,7 @@
 package com.micropower.basic.netty;
 
 import com.micropower.basic.netty.tcp.TcpServerChannelInitializer;
-import com.micropower.basic.netty.UDP.UdpServerChannelInitializer;
+import com.micropower.basic.netty.udp.UdpServerChannelInitializer;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;

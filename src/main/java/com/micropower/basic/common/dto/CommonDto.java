@@ -1,17 +1,24 @@
 package com.micropower.basic.common.dto;
 
-import com.micropower.basic.SpringUtil;
 import com.micropower.basic.common.AreaEnum;
 import com.micropower.basic.common.DtoEnum;
+import com.micropower.basic.entity.DeviceBean;
+import com.micropower.basic.entity.StationBean;
 import com.micropower.basic.service.CompanyService;
 import com.micropower.basic.service.OperationRecordService;
-import com.micropower.basic.timer.DataProcessingTask;
+import com.micropower.basic.service.StationService;
+import com.micropower.basic.timer.PublicProcessing;
+import com.micropower.basic.timer.RealtimeStateTask;
 import com.micropower.basic.util.DecoderUtil;
 import com.micropower.basic.util.RedisUtil;
+import com.micropower.basic.util.StaticFinalWard;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,10 +31,28 @@ import java.util.Map;
  **/
 @Slf4j
 @Data
+@Component
 public class CommonDto {
-    private static CompanyService companyService = SpringUtil.getBean(CompanyService.class);
-    private static RedisUtil redisUtil = SpringUtil.getBean(RedisUtil.class);
-    private static OperationRecordService operationRecordService = SpringUtil.getBean(OperationRecordService.class);
+
+    private static CommonDto dto;
+
+    private @Autowired
+    CompanyService companyService;
+    private @Autowired
+    RedisUtil redisUtil;
+    private @Autowired
+    OperationRecordService operationRecordService;
+    private @Autowired
+    StationService stationService;
+
+    @PostConstruct
+    public void init() {
+        dto = this;
+        dto.redisUtil = this.redisUtil;
+        dto.companyService = this.companyService;
+        dto.operationRecordService = this.operationRecordService;
+        dto.stationService = this.stationService;
+    }
 
     //帧头
     private static final String HEAD_STR = "aa55";
@@ -96,9 +121,6 @@ public class CommonDto {
 
     public static CommonDto getDecode(String in) {
         try {
-            if (in.length() < 28) {
-                return null;
-            }
             //2字节帧头
             String head = in.substring(0, 4);
             //2字节帧尾
@@ -125,41 +147,46 @@ public class CommonDto {
                 }
                 //2字节设备地址
                 Integer address = Integer.parseInt(in.substring(16, 20), 16);
-                Map<String, Object> company = companyService.getByAddress(areaCode, address);
-                //过滤存在设备且状态为启用
-                if (company != null && DataProcessingTask.ON.equals(company.get(DataProcessingTask.STATE).toString())) {
-                    //主动上传报文
-                    if (dtoEnum != null) {
-                        CommonDto dto = (CommonDto) dtoEnum.getClss().newInstance();
-                        dto.setVersion(version);
-                        dto.setArea(area);
-                        dto.setAreaCode(areaCode);
-                        dto.setCode(code);
-                        dto.setLength(length);
-                        dto.setFeedback(false);
-                        dto.setSuccess(true);
-                        dto.setAddress(address);
-                        dto.decode(in.substring(20, in.length() - 6), dto);
-                        return dto;
-                        //下发指令后得到的反馈报文
-                    } else if (Arrays.asList(FEEDBACK_CODE).contains(code)) {
-                        CommonDto dto = new CommonDto();
-                        dto.setVersion(version);
-                        dto.setArea(area);
-                        dto.setAreaCode(areaCode);
-                        dto.setCode(code);
-                        dto.setLength(length);
-                        dto.setFeedback(true);
-                        dto.setAddress(address);
-                        //1字节反馈结果
-                        int feedback = Integer.parseInt(in.substring(20, 22));
-                        dto.setSuccess(feedback == 1);
-                        return dto;
+                DeviceBean device = dto.companyService.getByAddress(areaCode, address);
+                if (device != null) {
+                    dto.companyService.dataUpload(areaCode, address);
+                    StationBean station = PublicProcessing.getStationByAreaAddress(areaCode, address);
+                    //过滤存在设备且状态为启用
+                    if (StaticFinalWard.ON.equals(device.getState()) && station != null) {
+                        //主动上传报文
+                        if (dtoEnum != null) {
+                            CommonDto dto = (CommonDto) dtoEnum.getClss().newInstance();
+                            dto.setVersion(version);
+                            dto.setArea(area);
+                            dto.setAreaCode(areaCode);
+                            dto.setCode(code);
+                            dto.setLength(length);
+                            dto.setFeedback(false);
+                            dto.setSuccess(true);
+                            dto.setAddress(address);
+                            dto.decode(in.substring(20, in.length() - 6), dto);
+                            return dto;
+                            //下发指令后得到的反馈报文
+                        } else if (Arrays.asList(FEEDBACK_CODE).contains(code)) {
+                            CommonDto dto = new CommonDto();
+                            dto.setVersion(version);
+                            dto.setArea(area);
+                            dto.setAreaCode(areaCode);
+                            dto.setCode(code);
+                            dto.setLength(length);
+                            dto.setFeedback(true);
+                            dto.setAddress(address);
+                            //1字节反馈结果
+                            int feedback = Integer.parseInt(in.substring(20, 22));
+                            dto.setSuccess(feedback == 1);
+                            return dto;
+                        }
                     }
                 }
             }
             return null;
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

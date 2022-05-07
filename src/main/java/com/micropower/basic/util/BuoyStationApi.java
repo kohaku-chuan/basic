@@ -1,5 +1,6 @@
 package com.micropower.basic.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
@@ -30,13 +31,13 @@ public class BuoyStationApi {
     }
 
     private String buildParams() {
-        Map<String, Object> param = new HashMap<>(4);
+        Map<String, Object> param = new HashMap<>(5);
         param.put("address", address);
         param.put("cod", cod);
         param.put("ph", ph);
         param.put("ss", ss);
         param.put("nh3", nh3);
-        return JSONObject.toJSONString(param);
+        return JSON.toJSONString(param);
     }
 
     public String getRobotResult() {

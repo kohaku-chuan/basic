@@ -33,7 +33,7 @@ public class ValueRecordDto extends CommonDto {
         dto.setTotalPackages(totalPackages);
         List<HistoryChildRecord> list = new ArrayList<>();
         String recordStr = in.substring(2);
-        Integer basicNum = 0;
+        int basicNum = 0;
         for (int i = 0; i < totalPackages; i++) {
             List<String> valueList = new ArrayList<>();
             String level = DecoderUtil.get1032Value(recordStr.substring(basicNum, 8 + basicNum));
@@ -76,7 +76,7 @@ public class ValueRecordDto extends CommonDto {
         dto.setTotalPackages(totalPackages);
         List<HistoryChildRecord> list = new ArrayList<>();
         String recordStr = in.substring(2);
-        Integer basicNum = 0;
+        int basicNum = 0;
         for (int i = 0; i < totalPackages; i++) {
             List<String> valueList = new ArrayList<>();
             String level = DecoderUtil.get1032Value(recordStr.substring(basicNum, 8 + basicNum));

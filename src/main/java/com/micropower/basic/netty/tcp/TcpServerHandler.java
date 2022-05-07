@@ -2,7 +2,6 @@ package com.micropower.basic.netty.tcp;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.micropower.basic.SpringUtil;
 import com.micropower.basic.common.dto.CommonDto;
 import com.micropower.basic.common.dto.receive.RunningStateDto;
 import com.micropower.basic.common.dto.receive.ValueRecordDto;
@@ -18,7 +17,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,10 +31,22 @@ import java.util.Map;
  * @Author:Kohaku_川
  **/
 @Slf4j
+@Component
 public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 
-    private static RedisUtil redisUtil = SpringUtil.getBean(RedisUtil.class);
-    private static OperationRecordService operationRecordService = SpringUtil.getBean(OperationRecordService.class);
+    private static TcpServerHandler handler;
+
+    private @Autowired
+    RedisUtil redisUtil;
+    private @Autowired
+    OperationRecordService operationRecordService;
+
+    @PostConstruct
+    public void init() {
+        handler = this;
+        handler.redisUtil = this.redisUtil;
+        handler.operationRecordService = this.operationRecordService;
+    }
 
     /**
      * 客户端连接会触发

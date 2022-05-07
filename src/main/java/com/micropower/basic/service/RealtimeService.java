@@ -1,5 +1,6 @@
 package com.micropower.basic.service;
 
+import com.micropower.basic.entity.FlowRecordBean;
 import com.micropower.basic.entity.RealtimeDataBean;
 
 import java.util.List;
@@ -61,17 +62,17 @@ public interface RealtimeService {
     /**
      * 添加流量分钟记录
      */
-    boolean insertFlowMinRecord(Map<String, Object> runMap);
+    boolean insertFlowMinRecord(FlowRecordBean recordBean);
 
     /**
      * 添加流量小时记录即日统计
      */
-    boolean insertFlowHourRecordList(List<Map<String, Object>> valueRecordList);
+    boolean insertFlowHourRecord(FlowRecordBean recordBean);
 
     /**
      * 添加流量日记录即月统计
      */
-    boolean insertFlowDayRecordList(List<Map<String, Object>> valueRecordList);
+    boolean insertFlowDayRecord(FlowRecordBean recordBean);
 
     /**
      * 插入水质记录分钟记录
@@ -91,7 +92,7 @@ public interface RealtimeService {
     /**
      * 插入雨量记录
      */
-    boolean insertRainfallMinRecord(Map<String, Object> runMap);
+    boolean insertRainfallMinRecord(RealtimeDataBean realtimeDataBean);
 
     /**
      * 更新雨量基本值
@@ -102,4 +103,7 @@ public interface RealtimeService {
      * 获取上一次通讯时间
      */
     String getLastTimeUploadTime(Integer stationId);
+
+    Map<String, Object> getRealTimeById(int id);
+
 }

@@ -60,6 +60,16 @@ public class StationBean {
     String latitude;
 
     /**
+     * 切换到正常状态的时间
+     */
+    String normalTime;
+
+    /**
+     * 切换到维护状态的时间
+     */
+    String abnormalTime;
+
+    /**
      * 绑定设备信息
      */
     DeviceBean device;

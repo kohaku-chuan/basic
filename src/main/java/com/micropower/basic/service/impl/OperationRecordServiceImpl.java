@@ -1,14 +1,11 @@
 package com.micropower.basic.service.impl;
 
 import com.micropower.basic.common.dto.receive.ExceptionChildRecord;
-import com.micropower.basic.common.dto.receive.HistoryChildRecord;
 import com.micropower.basic.common.dto.receive.OperationChildRecord;
 import com.micropower.basic.common.dto.receive.QuerySettingBackDto;
-import com.micropower.basic.dao.CompanyDao;
 import com.micropower.basic.dao.OperationRecordDao;
 import com.micropower.basic.entity.ExceptionRecordBean;
 import com.micropower.basic.service.OperationRecordService;
-import org.apache.pulsar.shade.org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,17 +18,8 @@ import java.util.*;
  **/
 @Service
 public class OperationRecordServiceImpl implements OperationRecordService {
-
-    private final
-    CompanyDao companyDao;
-    private final
-    OperationRecordDao operationRecordDao;
-
     @Autowired
-    public OperationRecordServiceImpl(CompanyDao companyDao, OperationRecordDao operationRecordDao) {
-        this.companyDao = companyDao;
-        this.operationRecordDao = operationRecordDao;
-    }
+    OperationRecordDao operationRecordDao;
 
     @Override
     public boolean insertOperationRecord(Map<String, Object> operationMap) {
@@ -60,16 +48,8 @@ public class OperationRecordServiceImpl implements OperationRecordService {
     }
 
     @Override
-    public void insertCycleRecordList(List<Map<String, Object>> valueList) {
-        if (!valueList.isEmpty()) {
-            for (Map<String, Object> map : valueList) {
-                try {
-                    operationRecordDao.insertCycleRecord(map);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    public void insertCycleRecord(Map<String, Object> map) {
+        operationRecordDao.insertCycleRecord(map);
     }
 
     @Override

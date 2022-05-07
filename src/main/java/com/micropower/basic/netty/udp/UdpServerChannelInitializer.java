@@ -1,8 +1,7 @@
-package com.micropower.basic.netty.UDP;
+package com.micropower.basic.netty.udp;
 
 import com.micropower.basic.netty.CommonEncoder;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.DatagramChannel;
 
 /**

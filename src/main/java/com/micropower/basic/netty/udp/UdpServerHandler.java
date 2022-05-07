@@ -1,5 +1,6 @@
-package com.micropower.basic.netty.UDP;
+package com.micropower.basic.netty.udp;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.micropower.basic.common.dto.CommonDto;
@@ -35,18 +36,18 @@ import java.util.Map;
 @Component
 public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
-    private static UdpServerHandler udpServerHandler;
+    private static UdpServerHandler handler;
 
-    @Autowired
-    private RedisUtil redisUtil;
-    @Autowired
-    private OperationRecordService operationRecordService;
+    private @Autowired
+    RedisUtil redisUtil;
+    private @Autowired
+    OperationRecordService operationRecordService;
 
     @PostConstruct
     public void init() {
-        udpServerHandler = this;
-        udpServerHandler.redisUtil = this.redisUtil;
-        udpServerHandler.operationRecordService = this.operationRecordService;
+        handler = this;
+        handler.redisUtil = this.redisUtil;
+        handler.operationRecordService = this.operationRecordService;
     }
 
     @Override
@@ -68,12 +69,12 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket
             Map<String, Object> map = new HashMap<>();
             map.put("time", new Date());
             map.put("content", receiveStr);
-            map.put("type", "UDP");
+            map.put("type", "udp");
             map.put("areaCode", commonDto.getAreaCode());
             map.put("address", commonDto.getAddress());
-            map.put("description", JSONObject.toJSONString(commonDto));
-            udpServerHandler.operationRecordService.insertMessage(map);
-            commonDto.setCommunicationMode("UDP");
+            map.put("description", JSON.toJSONString(commonDto));
+            operationRecordService.insertMessage(map);
+            commonDto.setCommunicationMode("udp");
             ChannelCache.checkPacket(commonDto.getAreaCode() + commonDto.getAddress(), datagramPacket);
             ChannelCache.putContext(commonDto.getAreaCode() + commonDto.getAddress(), channelHandlerContext);
             if (commonDto.isFeedback() || Arrays.asList(CommonDto.getQueryBackCode()).contains(commonDto.getCode())) {
@@ -83,15 +84,15 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket
                     future.setResponse(commonDto);
                 } else {
                     if ("10".equals(commonDto.getCode()) && commonDto.isSuccess()) {
-                        udpServerHandler.redisUtil.hset(commonDto.getAreaCode() + commonDto.getAddress(), "address_set_success", "1", 30000);
+                        redisUtil.hset(commonDto.getAreaCode() + commonDto.getAddress(), "address_set_success", "1", 30000);
                     }
                 }
             } else if (commonDto instanceof RunningStateDto) {
                 ForwardingServer.forwarding(commonDto, receiveStr);
-                udpServerHandler.redisUtil.lSet("realtimeData", JSONObject.toJSONString(commonDto, SerializerFeature.IgnoreErrorGetter));
+                redisUtil.lSet("realtimeData", JSONObject.toJSONString(commonDto, SerializerFeature.IgnoreErrorGetter));
             } else if (commonDto instanceof ValueRecordDto) {
                 ForwardingServer.forwarding(commonDto, receiveStr);
-                udpServerHandler.redisUtil.llSet("valueRecord", JSONObject.toJSONString(commonDto, SerializerFeature.IgnoreErrorGetter));
+                redisUtil.llSet("valueRecord", JSONObject.toJSONString(commonDto, SerializerFeature.IgnoreErrorGetter));
             }
         }
     }

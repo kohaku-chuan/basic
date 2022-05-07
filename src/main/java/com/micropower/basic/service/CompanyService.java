@@ -74,4 +74,11 @@ public interface CompanyService {
       */
     List<Map<String, Object>> getOriginForwardConfig(String areaCode, Integer address);
 
+    /**
+     *
+     * @description TODO 更新设备网络与数据上传时间
+     * @author Kohaku_川
+     * @date 2022/4/29 16:42
+     */
+    boolean dataUpload(String areaCode, Integer address);
 }

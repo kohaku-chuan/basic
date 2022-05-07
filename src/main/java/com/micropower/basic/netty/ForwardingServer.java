@@ -1,11 +1,13 @@
 package com.micropower.basic.netty;
 
-import com.micropower.basic.SpringUtil;
 import com.micropower.basic.common.dto.CommonDto;
-import com.micropower.basic.service.impl.CompanyServiceImpl;
-import com.micropower.basic.service.impl.OperationRecordServiceImpl;
+import com.micropower.basic.service.CompanyService;
+import com.micropower.basic.service.OperationRecordService;
 import com.micropower.basic.util.DecoderUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.DataOutputStream;
 import java.net.Socket;
 import java.util.*;
@@ -15,16 +17,27 @@ import java.util.*;
  * @Description: 原文报文转发
  * @Author:Kohaku_川
  **/
+@Component
 public class ForwardingServer {
+    private static ForwardingServer server;
 
     private ForwardingServer() {
     }
 
-    private static OperationRecordServiceImpl operationRecordService = SpringUtil.getBean(OperationRecordServiceImpl.class);
-    private static CompanyServiceImpl companyService = SpringUtil.getBean(CompanyServiceImpl.class);
+    private @Autowired
+    OperationRecordService operationRecordService;
+    private @Autowired
+    CompanyService companyService;
+
+    @PostConstruct
+    public void init() {
+        server = this;
+        server.operationRecordService = this.operationRecordService;
+        server.companyService = this.companyService;
+    }
 
     public static void forwarding(CommonDto dto, String msg) {
-        List<Map<String, Object>> configureList = companyService.getOriginForwardConfig(dto.getAreaCode(), dto.getAddress());
+        List<Map<String, Object>> configureList = server.companyService.getOriginForwardConfig(dto.getAreaCode(), dto.getAddress());
         if (!configureList.isEmpty()) {
             for (Map<String, Object> stringObjectMap : configureList) {
                 String ip = stringObjectMap.get("ip").toString();
@@ -57,7 +70,7 @@ public class ForwardingServer {
         map.put("type", type);
         map.put("content", content);
         map.put("result", result);
-        operationRecordService.insertForwardRecord(map);
+        server.operationRecordService.insertForwardRecord(map);
     }
 
 }

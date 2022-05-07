@@ -6,6 +6,7 @@ import com.micropower.basic.service.StationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,9 @@ public class StationServiceImpl implements StationService {
     }
 
     @Override
-    public List<StationBean> getStationListByMap(Map<String, Object> map) {
+    public List<StationBean> getFlowStationList() {
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("isFlow", 1);
         return dao.getStationListByMap(map);
     }
 }

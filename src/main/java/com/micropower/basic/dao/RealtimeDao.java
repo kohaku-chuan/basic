@@ -1,5 +1,6 @@
 package com.micropower.basic.dao;
 
+import com.micropower.basic.entity.FlowRecordBean;
 import com.micropower.basic.entity.RealtimeDataBean;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -26,9 +27,9 @@ public interface RealtimeDao {
 
     int insertFlowMinRecordList(@Param("list") List<Map<String, Object>> valueRecordList);
 
-    int insertFlowHourRecordList(@Param("list") List<Map<String, Object>> valueRecordList);
+    int insertFlowHourRecord(FlowRecordBean flowRecordBean);
 
-    int insertFlowDayRecordList(@Param("list") List<Map<String, Object>> valueRecordList);
+    int insertFlowDayRecord(FlowRecordBean flowRecordBean);
 
     int insertValueMinRecord(Map<String, Object> minMap);
 
@@ -38,14 +39,15 @@ public interface RealtimeDao {
 
     int insertValueRecord(Map<String, Object> runMap);
 
-    int insertFlowMinRecord(Map<String, Object> runMap);
+    int insertFlowMinRecord(FlowRecordBean recordBean);
 
     Map<String, Object> getPulseBasic(@Param("stationId") Integer stationId);
 
-    int insertRainfallMinRecord(Map<String, Object> runMap);
+    int insertRainfallMinRecord(RealtimeDataBean realtimeDataBean);
 
     int updateFlowBase(@Param("stationId") Integer stationId, @Param("totalFlow") String totalFlow);
 
     String getLastTimeUploadTime(@Param("stationId") Integer stationId);
 
+    Map<String, Object> getRealTimeById(int id);
 }

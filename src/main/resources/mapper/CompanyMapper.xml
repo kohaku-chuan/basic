@@ -36,6 +36,13 @@
         <result property="state" column="state"/>
         <result property="network" column="network"/>
     </resultMap>
+    <update id="dataUpload">
+        update device
+        set upload_time=now(),
+            network='在线'
+        where area_code = #{areaCode}
+          and address = #{address}
+    </update>
 
     <select id="getByAddress" resultMap="deviceResultMap">
         select *
@@ -79,16 +86,16 @@
         select *
         from user
         <where>
-            <if test="type==1">
+            <if test="type=='network_warn'">
                 and network_warn=1
             </if>
-            <if test="type==2">
+            <if test="type=='level_warn'">
                 and level_warn=1
             </if>
-            <if test="type==3">
+            <if test="type=='one_level_warn'">
                 and one_level_warn=1
             </if>
-            <if test="type==4">
+            <if test="type=='two_level_warn'">
                 and two_level_warn=1
             </if>
             and role_id = 1

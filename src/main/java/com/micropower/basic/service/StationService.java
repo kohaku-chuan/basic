@@ -21,10 +21,9 @@ public interface StationService {
     StationBean getStationByMap(Map<String,Object> map);
 
     /**
-     * @description TODO 条件获取站点列表
+     * @description TODO 获取流量监测站点
      * @author Kohaku_川
      * @date 2022/4/24 10:21
      */
-    List<StationBean> getStationListByMap(Map<String,Object> map);
-
+    List<StationBean> getFlowStationList();
 }

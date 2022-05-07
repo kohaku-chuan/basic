@@ -3,6 +3,7 @@ package com.micropower.basic.common.dto.receive;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Date: 2020/9/18 18:01
@@ -45,4 +46,14 @@ public class HistoryChildRecord {
      * 数据采集时间戳
      */
     String sampleTime;
+
+    /**
+     * 处理过后的数据集合
+     */
+    List<Map<String, Object>> realValueList;
+
+    /**
+     * 是否更新至实时数据
+     */
+    boolean updateToRealtime;
 }

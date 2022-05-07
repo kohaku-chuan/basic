@@ -61,4 +61,9 @@ public class CompanyServiceImpl implements CompanyService {
         return companyDao.getOriginForwardConfig(areaCode, address);
     }
 
+    @Override
+    public boolean dataUpload(String areaCode, Integer address) {
+        return companyDao.dataUpload(areaCode,address)>0;
+    }
+
 }

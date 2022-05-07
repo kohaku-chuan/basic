@@ -11,6 +11,8 @@
         <result property="gpsRead" column="state"/>
         <result property="longitude" column="longitude"/>
         <result property="latitude" column="latitude"/>
+        <result property="normalTime" column="normal_time"/>
+        <result property="abnormalTime" column="abnormal_time"/>
         <association property="device" resultMap="com.micropower.basic.dao.CompanyDao.deviceResultMap"/>
     </resultMap>
     <update id="networkOffline">
@@ -37,8 +39,8 @@
         from station s
         join device d on d.id=s.device_id
         <where>
-            <if test="is_flow !=''and is_flow!=null">
-                and d.is_flow=#{is_flow}
+            <if test="isFlow !=''and isFlow!=null">
+                and d.is_flow=#{isFlow}
             </if>
         </where>
     </select>

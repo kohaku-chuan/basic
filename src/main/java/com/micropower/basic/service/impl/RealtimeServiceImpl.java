@@ -1,8 +1,7 @@
 package com.micropower.basic.service.impl;
 
-import com.micropower.basic.dao.CompanyDao;
-import com.micropower.basic.dao.OperationRecordDao;
 import com.micropower.basic.dao.RealtimeDao;
+import com.micropower.basic.entity.FlowRecordBean;
 import com.micropower.basic.entity.RealtimeDataBean;
 import com.micropower.basic.service.RealtimeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,18 +76,18 @@ public class RealtimeServiceImpl implements RealtimeService {
     }
 
     @Override
-    public boolean insertFlowMinRecord(Map<String, Object> runMap) {
-        return realtimeDao.insertFlowMinRecord(runMap) > 0;
+    public boolean insertFlowMinRecord(FlowRecordBean recordBean) {
+        return realtimeDao.insertFlowMinRecord(recordBean) > 0;
     }
 
     @Override
-    public boolean insertFlowHourRecordList(List<Map<String, Object>> valueRecordList) {
-        return realtimeDao.insertFlowHourRecordList(valueRecordList) > 0;
+    public boolean insertFlowHourRecord(FlowRecordBean recordBean) {
+        return realtimeDao.insertFlowHourRecord(recordBean) > 0;
     }
 
     @Override
-    public boolean insertFlowDayRecordList(List<Map<String, Object>> valueRecordList) {
-        return realtimeDao.insertFlowDayRecordList(valueRecordList) > 0;
+    public boolean insertFlowDayRecord(FlowRecordBean recordBean) {
+        return realtimeDao.insertFlowDayRecord(recordBean) > 0;
     }
 
     @Override
@@ -107,17 +106,22 @@ public class RealtimeServiceImpl implements RealtimeService {
     }
 
     @Override
-    public boolean insertRainfallMinRecord(Map<String, Object> runMap) {
-        return realtimeDao.insertRainfallMinRecord(runMap) > 0;
+    public boolean insertRainfallMinRecord(RealtimeDataBean realtimeDataBean) {
+        return realtimeDao.insertRainfallMinRecord(realtimeDataBean) > 0;
     }
 
     @Override
     public boolean updateFlowBase(Integer stationId, String totalFlow) {
-        return realtimeDao.updateFlowBase(stationId, totalFlow)>0;
+        return realtimeDao.updateFlowBase(stationId, totalFlow) > 0;
     }
 
     @Override
     public String getLastTimeUploadTime(Integer stationId) {
         return realtimeDao.getLastTimeUploadTime(stationId);
+    }
+
+    @Override
+    public Map<String, Object> getRealTimeById(int id) {
+        return realtimeDao.getRealTimeById(id);
     }
 }

@@ -3,6 +3,7 @@ package com.micropower.basic.common.dto.receive;
 import com.micropower.basic.common.dto.CommonDto;
 import com.micropower.basic.util.DateUtil;
 import com.micropower.basic.util.DecoderUtil;
+import com.micropower.basic.util.StaticFinalWard;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -194,7 +195,7 @@ public class RunningStateDto extends CommonDto {
             Date utcDate = DateUtil.parseStr2Date(runningStateDto.getRealTimeClock());
             //服务器实时时间超过设备RTC实时时钟1小时，判定时间异常
             if (System.currentTimeMillis() - utcDate.getTime() > 1000 * 60 * 60) {
-                runningStateDto.setFaultState("时间异常");
+                runningStateDto.setFaultState(StaticFinalWard.TIME_ERROR);
             }
         } catch (Exception e) {
             log.error("实时报文解析异常！");
@@ -275,7 +276,7 @@ public class RunningStateDto extends CommonDto {
             runningStateDto.setSampleTime(DecoderUtil.parseDate(in.substring(108 + num * 8, 120 + num * 8)));
             //服务器实时时间超过设备RTC实时时钟1小时，判定时间异常
             if (System.currentTimeMillis() - DateUtil.parseStr2Date(runningStateDto.getRealTimeClock()).getTime() > 1000 * 60 * 60) {
-                runningStateDto.setFaultState("时间异常");
+                runningStateDto.setFaultState(StaticFinalWard.TIME_ERROR);
             }
         } catch (Exception e) {
             log.error("实时报文解析异常");

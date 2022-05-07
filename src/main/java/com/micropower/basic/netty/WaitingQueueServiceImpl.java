@@ -8,9 +8,8 @@ import com.micropower.basic.common.dto.send.*;
 import com.micropower.basic.netty.syncWrite.SyncWriteFuture;
 import com.micropower.basic.netty.syncWrite.SyncWriteMap;
 import com.micropower.basic.netty.syncWrite.WriteFuture;
-import com.micropower.basic.service.CompanyService;
 import com.micropower.basic.service.OperationRecordService;
-import com.micropower.basic.timer.DataProcessingTask;
+import com.micropower.basic.util.DateUtil;
 import com.micropower.basic.util.RedisUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -39,49 +38,44 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class WaitingQueueServiceImpl implements WaitingQueueService {
 
-    public static WaitingQueueServiceImpl service;
+    private static WaitingQueueServiceImpl service;
 
-    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private final static String NULL = "null";
-    private final static String UDP = "UDP";
-    private final static String TCP = "tcp";
-    private final static String SUCCESS = "feedback";
-    private final static String DATA = "data";
-    private final static String SWITCHOVER_WORK_STATE = "switchoverSetting";
-    private final static String CHECK_CHANNEL_SETTING = "checkChannelSetting";
-    private final static String MODEL_SETTING = "modelSetting";
-    private final static String LEVEL_SETTING = "levelSetting";
-    private final static String WATER_FACTOR_SETTING = "waterFactorSetting";
-    private final static String NETWORK_SETTING = "networkSetting";
-    private final static String SERIAL_PORT_SETTING = "serialPortSetting";
-    private final static String POWER_CONTROL_SETTING = "powerControlSetting";
-    private final static String TIME_SETTING = "timeSetting";
-    private final static String QUERY_OPERATION = "queryOperationRecord";
-    private final static String QUERY_EXCEPTION = "queryExceptionRecord";
-    private final static String QUERY_HISTORY = "queryHistoryRecord";
-    private final static String QUERY_ALL_SETTING = "queryAllSetting";
-    private final static String AREA_ADDRESS_SETTING = "areaAddressSetting";
-    private final static String BUILT_IN_LEVEL_SENSOR_SETTING = "builtInLevelSensorSetting";
-    private final static String UPGRADE_DEVICE = "upgradeDevice";
-    private final static String UPGRADE_DEVICE_2 = "upgradeDevice2";
-    private final static String SERIAL_PORT_PROTOCOL_SETTING = "serialPortProtocolSetting";
-    private final static String MOD_BUS_PASS_THROUGH_CONTROL_SETTING = "modBusPassThroughControlSetting";
-    private final static String CHANNEL_POWER_ON_DELAY_SETTING = "channelPowerOnDelaySetting";
-
+    private static final String NULL = "null";
+    private static final String UDP = "udp";
+    private static final String TCP = "tcp";
+    private static final String SUCCESS = "feedback";
+    private static final String DATA = "data";
+    private static final String SWITCHOVER_WORK_STATE = "switchoverSetting";
+    private static final String CHECK_CHANNEL_SETTING = "checkChannelSetting";
+    private static final String MODEL_SETTING = "modelSetting";
+    private static final String LEVEL_SETTING = "levelSetting";
+    private static final String WATER_FACTOR_SETTING = "waterFactorSetting";
+    private static final String NETWORK_SETTING = "networkSetting";
+    private static final String SERIAL_PORT_SETTING = "serialPortSetting";
+    private static final String POWER_CONTROL_SETTING = "powerControlSetting";
+    private static final String TIME_SETTING = "timeSetting";
+    private static final String QUERY_OPERATION = "queryOperationRecord";
+    private static final String QUERY_EXCEPTION = "queryExceptionRecord";
+    private static final String QUERY_HISTORY = "queryHistoryRecord";
+    private static final String QUERY_ALL_SETTING = "queryAllSetting";
+    private static final String AREA_ADDRESS_SETTING = "areaAddressSetting";
+    private static final String BUILT_IN_LEVEL_SENSOR_SETTING = "builtInLevelSensorSetting";
+    private static final String UPGRADE_DEVICE = "upgradeDevice";
+    private static final String UPGRADE_DEVICE_2 = "upgradeDevice2";
+    private static final String SERIAL_PORT_PROTOCOL_SETTING = "serialPortProtocolSetting";
+    private static final String MOD_BUS_PASS_THROUGH_CONTROL_SETTING = "modBusPassThroughControlSetting";
+    private static final String CHANNEL_POWER_ON_DELAY_SETTING = "channelPowerOnDelaySetting";
 
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
     private OperationRecordService operationRecordService;
-    @Autowired
-    private CompanyService companyService;
 
     @PostConstruct
     public void init() {
         service = this;
         service.redisUtil = this.redisUtil;
         service.operationRecordService = this.operationRecordService;
-        service.companyService = this.companyService;
     }
 
     @Override
@@ -253,7 +247,7 @@ public class WaitingQueueServiceImpl implements WaitingQueueService {
             if (queryVersionResult.containsKey(DATA)) {
                 QuerySettingBackDto data = (QuerySettingBackDto) queryVersionResult.get(DATA);
                 checkHardVersion = data.getHardwareVersion();
-                if (softwareVersion % 2 != 0 && "UDP".equals(communicationMode) || softwareVersion % 2 == 0 && "tcp".equals(communicationMode)
+                if (softwareVersion % 2 != 0 && "udp".equals(communicationMode) || softwareVersion % 2 == 0 && "tcp".equals(communicationMode)
                         || !checkHardVersion.equals(hardwareVersion)) {
                     redisUtil.hdel(areaCode + address, UPGRADE_DEVICE_2);
                     saveOperationRecord(areaCode, address, UPGRADE_DEVICE_2, false);
@@ -334,7 +328,6 @@ public class WaitingQueueServiceImpl implements WaitingQueueService {
             if (send) {
                 log.info(">>>>>>>>>>>>>>>>>>>>>>>>>【续传升级 - 升级成功】<<<<<<<<<<<<<<<<<<<<<<<<<");
                 redisUtil.hdel(areaCode + address, UPGRADE_DEVICE_2);
-                companyService.updateUpgradeTime(dto.getAreaCode(), dto.getAddress());
                 saveOperationRecord(areaCode, address, UPGRADE_DEVICE_2, true);
             } else {
                 int times = dto.getTimes() + 1;
@@ -410,9 +403,6 @@ public class WaitingQueueServiceImpl implements WaitingQueueService {
                 }
             }
             saveOperationRecord(areaCode, address, UPGRADE_DEVICE, send);
-            if (send) {
-                companyService.updateUpgradeTime(areaCode, address);
-            }
             redisUtil.hdel(areaCode + address, UPGRADE_DEVICE);
             return true;
         }
@@ -430,8 +420,8 @@ public class WaitingQueueServiceImpl implements WaitingQueueService {
                 if (data.getTotalRecordNumber() != data.getRecordNumber()) {
                     QueryOperationRecordDto nextQuery = new QueryOperationRecordDto();
                     try {
-                        Date timeDate = simpleDateFormat.parse(data.getEndTime());
-                        nextQuery.setBeginTime(simpleDateFormat.parse(getTimeByMinute(timeDate, 1)));
+                        Date timeDate = DateUtil.parseStr2Date(data.getEndTime());
+                        nextQuery.setBeginTime(DateUtil.parseStr2Date(getTimeByMinute(timeDate, 1)));
                         nextQuery.setEndTime(dto.getEndTime());
                         nextQuery.setAddress(dto.getAddress());
                         nextQuery.setArea(dto.getArea());
@@ -459,8 +449,8 @@ public class WaitingQueueServiceImpl implements WaitingQueueService {
                 if (data.getTotalRecordNumber() != data.getRecordNumber()) {
                     QueryExceptionRecordDto nextQuery = new QueryExceptionRecordDto();
                     try {
-                        Date timeDate = simpleDateFormat.parse(data.getEndTime());
-                        nextQuery.setBeginTime(simpleDateFormat.parse(getTimeByMinute(timeDate, 1)));
+                        Date timeDate = DateUtil.parseStr2Date(data.getEndTime());
+                        nextQuery.setBeginTime(DateUtil.parseStr2Date(getTimeByMinute(timeDate, 1)));
                         nextQuery.setEndTime(dto.getEndTime());
                         nextQuery.setAddress(dto.getAddress());
                         nextQuery.setArea(dto.getArea());

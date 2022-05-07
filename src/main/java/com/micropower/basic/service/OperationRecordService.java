@@ -2,7 +2,6 @@ package com.micropower.basic.service;
 
 
 import com.micropower.basic.common.dto.receive.ExceptionChildRecord;
-import com.micropower.basic.common.dto.receive.HistoryChildRecord;
 import com.micropower.basic.common.dto.receive.OperationChildRecord;
 import com.micropower.basic.common.dto.receive.QuerySettingBackDto;
 import com.micropower.basic.entity.ExceptionRecordBean;
@@ -65,7 +64,7 @@ public interface OperationRecordService {
      * @Date 9:14  2021/3/17
      * @Param
      **/
-    void insertCycleRecordList(List<Map<String, Object>> valueList);
+    void insertCycleRecord(Map<String, Object> map);
 
     /**
      * @return
@@ -132,11 +131,12 @@ public interface OperationRecordService {
     Map<String, Object> getFlowAvg(Map<String, Object> param);
 
     /**
-      * @description TODO 保存预警短信发送记录
-      * @author Kohaku_川
-      * @date 2022/4/24 13:58
-      */
+     * @description TODO 保存预警短信发送记录
+     * @author Kohaku_川
+     * @date 2022/4/24 13:58
+     */
     boolean insertMessageRecord(Map<String, Object> recordMap);
 
     List<Map<String, Object>> getWaterList(Map<String, Object> param);
+
 }

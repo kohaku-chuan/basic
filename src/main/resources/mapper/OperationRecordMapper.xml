@@ -14,8 +14,8 @@
         VALUES (#{time}, #{areCode}, #{address}, #{type}, #{content}, #{feedback})
     </insert>
     <insert id="insertCycleRecord" parameterType="map">
-        insert into device_cycle_record(area_code, address, outlet_level, value_list, sample_time)
-        VALUES (#{areaCode}, #{address}, #{outletLevel}, #{valueList}, #{sampleTime})
+        insert into device_cycle_record(station_id, outlet_level, value_list, sample_time)
+        VALUES (#{stationId}, #{outletLevel}, #{valueList}, #{sampleTime})
     </insert>
     <insert id="insertHistoryRecord" parameterType="map">
         insert into device_history_record(area_code, address, outlet_level, value_list, sample_time)
@@ -261,8 +261,8 @@
     <select id="getMaxFlow" resultType="java.util.Map">
         SELECT if(total_flow is null, 0, total_flow) as total_flow
         FROM flow_min_record
-        where address = #{address}
-          and area_code = #{areaCode}
+        where station_id = #{stationId}
+          and time &lt;= #{endTime}
           and total_flow != '异常'
           and total_flow != '解析异常'
           and total_flow != '故障'
@@ -270,10 +270,11 @@
         limit 1
     </select>
     <select id="getFlowAvg" resultType="java.util.Map">
-        select avg(level_height) as levelHeight, avg(speed) as speed, avg(flow) as flow
+        select cast(avg(level_height) as decimal(10, 3)) as levelHeight,
+               cast(avg(speed) as decimal(10, 3))        as speed,
+               cast(avg(flow) as decimal(10, 3))         as flow
         from flow_min_record
-        where address = #{address}
-          and area_code = #{areaCode}
+        where station_id = #{stationId}
           and `time` between #{beginTime} and #{endTime}
           and (level_height != '异常' or speed != '异常' or flow != '异常')
     </select>

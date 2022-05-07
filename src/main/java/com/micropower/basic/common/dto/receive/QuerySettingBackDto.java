@@ -726,19 +726,19 @@ public class QuerySettingBackDto extends CommonDto {
             //数据中心1 端口-2字节
             dto.setDataCenter1Port(Integer.valueOf(in.substring(150, 154), 16));
             //数据中心1 通讯方式-1字节
-            dto.setDataCenter1Model(Integer.valueOf(in.substring(154, 156), 16) == 0 ? "tcp" : "UDP");
+            dto.setDataCenter1Model(Integer.valueOf(in.substring(154, 156), 16) == 0 ? "tcp" : "udp");
             //数据中心2 IP-4字节
             dto.setDataCenter2Ip(Integer.valueOf(in.substring(156, 158), 16) + "." + Integer.valueOf(in.substring(158, 160), 16) + "." + Integer.valueOf(in.substring(160, 162), 16) + "." + Integer.valueOf(in.substring(162, 164), 16));
             //数据中心2 端口-2字节
             dto.setDataCenter2Port(Integer.valueOf(in.substring(164, 168), 16));
             //数据中心2 通讯方式-1字节
-            dto.setDataCenter2Model(Integer.valueOf(in.substring(168, 170), 16) == 0 ? "tcp" : "UDP");
+            dto.setDataCenter2Model(Integer.valueOf(in.substring(168, 170), 16) == 0 ? "tcp" : "udp");
             //数据中心3 IP-4字节
             dto.setDataCenter3Ip(Integer.valueOf(in.substring(170, 172), 16) + "." + Integer.valueOf(in.substring(172, 174), 16) + "." + Integer.valueOf(in.substring(174, 176), 16) + "." + Integer.valueOf(in.substring(176, 178), 16));
             //数据中心3 端口-2字节
             dto.setDataCenter3Port(Integer.valueOf(in.substring(178, 182), 16));
             //数据中心3 通讯方式-1字节
-            dto.setDataCenter3Model(Integer.valueOf(in.substring(182, 184), 16) == 0 ? "tcp" : "UDP");
+            dto.setDataCenter3Model(Integer.valueOf(in.substring(182, 184), 16) == 0 ? "tcp" : "udp");
             //RS485串口波特率-1字节
             dto.setBaudRate(forBaudRate(in.substring(184, 186)));
             //数据位数-1字节

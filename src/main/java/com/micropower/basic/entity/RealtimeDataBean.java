@@ -113,9 +113,9 @@ public class RealtimeDataBean {
      */
     String emissions;
 
-    /**流量计算间隔
+    /**数据上传间隔
      */
-    int flowInterval;
+    int uploadInterval;
 
     /**累计流量
      */
@@ -160,9 +160,5 @@ public class RealtimeDataBean {
     /**降雨强度
      */
     String rainfallIntensity;
-
-    /**雨量计算间隔
-     */
-    int rainInterval;
 
 }

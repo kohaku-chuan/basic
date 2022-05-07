@@ -1,24 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.micropower.basic.dao.RealtimeDao">
-    <insert id="insertUpdateRealtime">
-        insert into device_realtime_running(area_code, address, area, network, run_state, fault_state, rtc_time,
-                                            internal_voltage, external_voltage, sensor_voltage, temp, humidity,
-                                            tilt_angle,
-                                            rssi, rsrp, outlet_level, value_list, sample_time,
-                                            update_time, flow, speed, level_height, emissions, total_flow,
-                                            data_state, communication_mode, voltage_warn, humidity_warn,
-                                            sensor_voltage_warn,
-                                            rainfall_intensity, pulse_base)
-        VALUES (#{areaCode}, #{address}, #{area}, #{network}, #{runState}, #{faultState}, #{rtcTime},
+    <insert id="insertUpdateRealtime" parameterType="com.micropower.basic.entity.RealtimeDataBean">
+        insert into realtime_running(station_id, network, run_state, fault_state, rtc_time,
+                                     internal_voltage, external_voltage, sensor_voltage, temp, humidity,
+                                     tilt_angle, rssi, rsrp, sample_time, update_time, data_state, communication_mode,
+                                     voltage_warn, humidity_warn, sensor_voltage_warn)
+        VALUES (#{stationId}, #{network}, #{runState}, #{faultState}, #{rtcTime},
                 #{internalVoltage}, #{externalVoltage}, #{sensorVoltage}, #{temp}, #{humidity},
-                #{tiltAngle}, #{rssi}, #{rsrp}, #{outletLevel}, #{valueList}, #{sampleTime}, #{updateTime},
-                #{flow}, #{speed}, #{levelHeight}, #{emissions}, #{totalFlow}, #{dataState},
-                #{communicationMode}, #{voltage_warn}, #{humidity_warn}, #{sensor_voltage_warn}, #{rainfallIntensity},
-                #{rainfallPulse})
-        ON DUPLICATE KEY UPDATE area_code=#{areaCode},
-                                address=#{address},
-                                area=#{area},
+                #{tiltAngle}, #{rssi}, #{rsrp}, #{sampleTime}, #{updateTime}, #{dataState},
+                #{communicationMode}, #{voltage_warn}, #{humidity_warn}, #{sensor_voltage_warn})
+        ON DUPLICATE KEY UPDATE station_id=#{stationId},
                                 network= #{network},
                                 run_state=#{runState},
                                 fault_state=#{faultState},
@@ -31,23 +23,56 @@
                                 tilt_angle=#{tiltAngle},
                                 rssi= #{rssi},
                                 rsrp= #{rsrp},
-                                outlet_level=#{outletLevel},
-                                value_list=#{valueList},
                                 sample_time=#{sampleTime},
                                 update_time= #{updateTime},
-                                flow=#{flow},
-                                speed= #{speed},
-                                level_height=#{levelHeight},
-                                emissions=#{emissions},
-                                total_flow= #{totalFlow},
                                 data_state=#{dataState},
                                 communication_mode=#{communicationMode},
                                 voltage_warn=#{voltage_warn},
                                 humidity_warn=#{voltage_warn},
-                                sensor_voltage_warn=#{sensor_voltage_warn},
-                                rainfall_intensity=#{rainfallIntensity},
-                                pulse_base=#{rainfallPulse}
+                                sensor_voltage_warn=#{sensor_voltage_warn}
     </insert>
+    <update id="updateRealtimeData" parameterType="com.micropower.basic.entity.RealtimeDataBean">
+        update realtime_running
+        <set>
+            <if test="outletLevel!='' and outletLevel!=null">
+                outlet_level=#{outletLevel},
+            </if>
+            <if test="levelHeight!='' and levelHeight!=null">
+                level_height=#{levelHeight},
+            </if>
+            <if test="flow!='' and flow!=null">
+                flow=#{flow},
+            </if>
+            <if test="speed!='' and speed!=null">
+                speed=#{speed},
+            </if>
+            <if test="flowBase!='' and flowBase!=null">
+                flow_base=#{flowBase},
+            </if>
+            <if test="emissions!='' and emissions!=null">
+                emissions=#{emissions},
+            </if>
+            <if test="totalFlow!='' and totalFlow!=null">
+                total_flow=#{totalFlow},
+            </if>
+            <if test="pulseBase!='' and pulseBase!=null">
+                pulse_base=#{pulseBase},
+            </if>
+            <if test="pulseUpload!='' and pulseUpload!=null">
+                pulse_upload=#{pulseUpload},
+            </if>
+            <if test="pulseCount!='' and pulseCount!=null">
+                pulse_count=#{pulseCount},
+            </if>
+            <if test="rainfall!='' and rainfall!=null">
+                rainfall=#{rainfall},
+            </if>
+            <if test="rainfallIntensity!='' and rainfallIntensity!=null">
+                rainfall_intensity=#{rainfallIntensity},
+            </if>
+        </set>
+        where station_id=#{stationId}
+    </update>
     <insert id="insertStateRecordList" parameterType="java.util.List">
         insert into device_state_record(area_code, address, run_state, fault_state, rtc_time, internal_voltage,
         external_voltage, sensor_voltage, temp, humidity, tilt_angle, rssi, rsrp, latitude, longitude, sample_time,
@@ -75,21 +100,13 @@
             #{item.totalFlow},#{item.emissions})
         </foreach>
     </insert>
-    <insert id="insertFlowHourRecordList" parameterType="java.util.List">
-        insert into flow_hour_record(area_code, address, `time`, level_height, speed, flow, total_flow, emissions,
-        `range`)VALUES
-        <foreach collection="list" item="item" separator=",">
-            (#{item.areaCode},#{item.address},#{item.time},#{item.levelHeight},#{item.speed},#{item.flow},
-            #{item.totalFlow},#{item.emissions},#{item.range})
-        </foreach>
+    <insert id="insertFlowHourRecord" parameterType="com.micropower.basic.entity.FlowRecordBean">
+        insert into flow_hour_record(station_id, `time`, level_height, speed, flow, total_flow, emissions, `range`)
+        VALUES (#{stationId}, #{time}, #{levelHeight}, #{speed}, #{flow}, #{totalFlow}, #{emissions}, #{range})
     </insert>
-    <insert id="insertFlowDayRecordList" parameterType="java.util.List">
-        insert into flow_day_record(area_code, address, `time`, level_height, speed, flow, total_flow, emissions,
-        `range`)VALUES
-        <foreach collection="list" item="item" separator=",">
-            (#{item.areaCode},#{item.address},#{item.time},#{item.levelHeight},#{item.speed},#{item.flow},
-            #{item.totalFlow},#{item.emissions},#{item.range})
-        </foreach>
+    <insert id="insertFlowDayRecord" parameterType="com.micropower.basic.entity.FlowRecordBean">
+        insert into flow_day_record(station_id, `time`, level_height, speed, flow, total_flow, emissions, `range`)
+        VALUES (#{stationId}, #{time}, #{levelHeight}, #{speed}, #{flow}, #{totalFlow}, #{emissions}, #{range})
     </insert>
     <insert id="insertValueMinRecord">
         insert into device_value_min_record(area_code, address, time, value_name, outlet_level, value1, value2, value3,
@@ -113,14 +130,14 @@
         insert into device_value_record(area_code, address, outlet_level, value_list, `time`, state)
         VALUES (#{area_code}, #{address}, #{outlet_level}, #{value_list}, #{updateTime}, #{state})
     </insert>
-    <insert id="insertFlowMinRecord">
-        insert into flow_min_record(area_code, address, `time`, level_height, speed, flow, total_flow, emissions)
-        VALUES (#{area_code}, #{address}, #{updateTime}, #{level_height}, #{speed}, #{flow},
-                #{total_flow}, #{emissions})
+    <insert id="insertFlowMinRecord" parameterType="com.micropower.basic.entity.FlowRecordBean">
+        insert into flow_min_record(station_id, `time`, level_height, speed, flow, total_flow, emissions)
+        VALUES (#{stationId}, #{time}, #{levelHeight}, #{speed}, #{flow},
+                #{totalFlow}, #{emissions})
     </insert>
-    <insert id="insertRainfallMinRecord">
-        insert into rainfall_min_record(area_code, address, time, rainfall_pulse, rainfall, rainfall_intensity, state)
-        VALUES (#{areaCode}, #{address}, now(), #{rainfallPulse}, #{rainfall}, #{rainfallIntensity}, #{state})
+    <insert id="insertRainfallMinRecord" parameterType="com.micropower.basic.entity.RealtimeDataBean">
+        insert into rainfall_min_record(station_id, time, rainfall_pulse, rainfall, rainfall_intensity)
+        VALUES (#{stationId}, #{sampleTime}, #{rainfallPulse}, #{rainfall}, #{rainfallIntensity})
     </insert>
     <update id="updateFlowBase">
         update realtime_running
@@ -135,7 +152,7 @@
     </update>
     <select id="getListByMap" resultType="java.util.Map">
         select r.*,d.state,d.is_flow
-        from device_realtime_running r
+        from realtime_running r
         left join device d on r.area_code=d.area_code and r.address=d.address
         <where>
             <if test="network!=null and network!=''">
@@ -165,5 +182,10 @@
         select update_time
         from realtime_running
         where station_id = #{stationId}
+    </select>
+    <select id="getRealTimeById">
+        select *
+        from realtime_running
+        where station_id = #{id}
     </select>
 </mapper>
